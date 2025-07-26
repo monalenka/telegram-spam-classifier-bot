@@ -1,6 +1,11 @@
 # Telegram Anti-spam bot с ML-классификатором
 Telegram-бот для автоматического обнаружения и модерации спама в группах с использованием машинного обучения. Модель была обучена на самостоятельно собранных русскоязычных данных.
 
+
+**topics**
+telegram-bot  machine-learning  spam-detection  nlp  python  scikit-learn  tf-idf  logistic-regression  russian-language  text-classification  moderation  chat-bot  ai  ml  data-science  telegram-api  python-telegram-bot  text-processing  feature-extraction  confusion-matrix  model-evaluation 
+
+
 ## Возможности
 
 ### Автоматическое обнаружение спама
@@ -129,6 +134,8 @@ python bot/telegram_bot.py
 
 
 
+
+
 ## Автор
 
 **Лена** - [GitHub](https://github.com/monalenka)
@@ -137,8 +144,4 @@ python bot/telegram_bot.py
 
 Буду рада критике, рекомендациям и отзывам!
 
-
-
-**topics**
-telegram-bot  machine-learning  spam-detection  nlp  python  scikit-learn  tf-idf  logistic-regression  russian-language  text-classification  moderation  chat-bot  ai  ml  data-science  telegram-api  python-telegram-bot  text-processing  feature-extraction  confusion-matrix  model-evaluation 
 
