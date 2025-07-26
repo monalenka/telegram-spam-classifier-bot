@@ -100,7 +100,7 @@ python bot/telegram_bot.py
 
 Модель показывает следующую точность на русскоязычных данных:
 
-<img width="974" height="380" alt="image" src="https://github.com/user-attachments/assets/d99aa504-a08c-4876-a6f4-1e247a8456bd" />
+<img width="974" height="380" alt="image" src="https://github.com/user-attachments/assets/b80a79f0-b016-447c-bbc6-ce5cd3d159e1" />
 
 
 ## Кастомизация
