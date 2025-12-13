@@ -38,7 +38,28 @@ def extract_features(df):
                     'срочно', 'акция', 'кэшбэк', 'скидка', 'реклама', 'зарабатываю',
                     'зарабатывать', 'курьером', 'заработала', 'легкие деньги',
                     'быстрый заработок', 'порно', 'легкая работа', 'много денег',
-                    'зарабатывать онлайн', 'заработок онлайн', 'зарабатываю онлайн']
+                    'зарабатывать онлайн', 'заработок онлайн', 'зарабатываю онлайн',
+                    'пробник', 'пробники', 'пробнички', 'вложений', 'раскид', 'раскида',
+                    'нахуй']
     for keyword in spam_keywords:
         df[f'has_{keyword}'] = df['text'].str.contains(keyword).astype(int)
     return df
+
+
+def detect_single_chars_spam(text, threshold=0.7):
+    """
+    Обнаружение сообщений с большим количеством одиночных символов
+    threshold - порог (если доля одиночных символов > threshold, считаем спамом)
+    """
+    if not text or len(text.strip()) < 10:
+        return False
+    
+    words = text.split()
+    if len(words) < 5:
+        return False
+    
+    single_chars = sum(1 for word in words if len(word.strip()) == 1)
+    
+    ratio = single_chars / len(words)
+    
+    return ratio > threshold

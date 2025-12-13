@@ -84,7 +84,28 @@ def is_admin(user_id: int) -> bool:
     """Проверяет, является ли пользователь администратором"""
     return user_id in ADMIN_IDS
 
-
+def detect_single_chars_spam(text, threshold=0.5):
+    """
+    Обнаружение сообщений с большим количеством одиночных символов
+    threshold - порог (если доля одиночных символов > threshold, считаем спамом)
+    """
+    if not text or len(text.strip()) < 10:
+        return False
+    
+    words = text.split()
+    if len(words) < 3:
+        return False
+    
+    import re
+    single_chars = 0
+    for word in words:
+        clean_word = re.sub(r'[^\w]', '', word)
+        if len(clean_word) == 1 and clean_word.isalnum():
+            single_chars += 1
+    
+    ratio = single_chars / len(words)
+    
+    return ratio > threshold
 
 
 # загрузка модели и векторайзера
@@ -94,6 +115,9 @@ v = joblib.load(ps['vectorizer'])
 
 async def check_spam(text):
     """Проверка текста на спам"""
+    if detect_single_chars_spam(text):
+        return True, 0.95
+
     x = p.clean_text(text)
     d = pd.DataFrame({'text': [x]})
     f = p.extract_features(d.copy())

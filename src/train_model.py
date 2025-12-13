@@ -7,8 +7,10 @@ import numpy as np
 from scipy.sparse import hstack
 import utils
 import preprocessing
+import os
 
 paths = utils.get_paths()
+
 
 df = pd.read_csv(paths['combined'])
 print(f"Загружено {len(df)} сообщений")
