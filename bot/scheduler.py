@@ -13,6 +13,14 @@ from storage import known_chats
 
 logger = logging.getLogger(__name__)
 
+def safe_join(base_dir, *paths):
+    """Проверяет что результат внутри base_dir."""
+    real_base = os.path.realpath(base_dir)
+    target = os.path.realpath(os.path.join(base_dir, *paths))
+    if not target.startswith(real_base + os.sep) and target != real_base:
+        raise ValueError("Path traversal detected")
+    return target
+
 class ContentScheduler:
     """Класс для управления рассылкой контента подписчикам"""
     
@@ -133,7 +141,7 @@ class ContentScheduler:
                 # сохраняем файл с корректным расширением
                 ext_map = {"photo": "jpg", "video": "mp4", "audio": "mp3"}
                 ext = ext_map.get(content_type, "bin")
-                file_path = os.path.join(content_dir, f"{content_id}.{ext}")
+                file_path = safe_join(content_dir, f"{content_id}.{ext}")
                 if isinstance(content_data, bytes):
                     with open(file_path, 'wb') as f:
                         f.write(content_data)
@@ -375,17 +383,19 @@ class ContentScheduler:
     async def _send_to_chat(self, bot: Bot, chat_id: int, content: Dict):
         content_type = content["type"]
         content_path = content["path"]
+        content_dir = os.path.join(self.data_dir, "content")
+        safe_path = safe_join(content_dir, os.path.basename(content_path))
         caption = content.get("caption", "")
         if content_type == "text":
             await bot.send_message(chat_id, content_path)
         elif content_type == "photo":
-            with open(content_path, 'rb') as f:
+            with open(safe_path, 'rb') as f:
                 await bot.send_photo(chat_id, InputFile(f), caption=caption)
         elif content_type == "video":
-            with open(content_path, 'rb') as f:
+            with open(safe_path, 'rb') as f:
                 await bot.send_video(chat_id, InputFile(f), caption=caption)
         elif content_type == "audio":
-            with open(content_path, 'rb') as f:
+            with open(safe_path, 'rb') as f:
                 await bot.send_audio(chat_id, InputFile(f), caption=caption)
         else:
             await bot.send_message(chat_id, '(неизвестный тип контента)')
@@ -394,18 +404,20 @@ class ContentScheduler:
         """Отправляет контент конкретному пользователю"""
         content_type = content["type"]
         content_path = content["path"]
+        content_dir = os.path.join(self.data_dir, "content")
+        safe_path = safe_join(content_dir, os.path.basename(content_path))
         caption = content.get("caption", "")
         
         if content_type == "text":
             await bot.send_message(user_id, content_path)
         elif content_type == "photo":
-            with open(content_path, 'rb') as f:
+            with open(safe_path, 'rb') as f:
                 await bot.send_photo(user_id, InputFile(f), caption=caption)
         elif content_type == "video":
-            with open(content_path, 'rb') as f:
+            with open(safe_path, 'rb') as f:
                 await bot.send_video(user_id, InputFile(f), caption=caption)
         elif content_type == "audio":
-            with open(content_path, 'rb') as f:
+            with open(safe_path, 'rb') as f:
                 await bot.send_audio(user_id, InputFile(f), caption=caption)
         else:
             raise ValueError(f"Неподдерживаемый тип контента: {content_type}")
