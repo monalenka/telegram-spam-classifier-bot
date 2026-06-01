@@ -1,0 +1,46 @@
+name: SAST Security Scan
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install Bandit and Semgrep
+        run: |
+          pip install bandit
+          pip install semgrep
+
+      - name: Run Bandit SAST
+        run: |
+          bandit -r . -f json -o bandit-report.json -lll
+
+      - name: Run Semgrep SAST (with custom rules)
+        run: |
+          semgrep --config auto --config p/security-audit --config ./semgrep-rules --json --output semgrep-report.json .
+
+      - name: Upload Bandit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: bandit-report
+          path: bandit-report.json
+
+      - name: Upload Semgrep results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: semgrep-report
+          path: semgrep-report.json

@@ -1,0 +1,18 @@
+rules:
+  - id: unsafe-dynamic-path
+    pattern-either:
+      - pattern: |
+          $PATH = ...
+          ...
+          open($PATH, ...)
+      - pattern: |
+          $PATH = ...
+          ...
+          with open($PATH, ...) as $F:
+            ...
+    message: >
+      Обнаружена потенциально опасная подстановка переменной в путь к файлу.
+      Это может привести к Path Traversal, если переменная контролируется пользователем.
+      Используйте os.path.join и whitelist.
+    languages: [python]
+    severity: ERROR
